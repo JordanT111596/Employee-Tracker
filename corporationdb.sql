@@ -29,3 +29,8 @@ CREATE TABLE employee (
   role_id INT NOT NULL,
   manager_id INT
 );
+
+-- CREATE TABLE manager (
+--   id INT PRIMARY KEY AUTO_INCREMENT,
+--   name VARCHAR(30) NOT NULL
+-- )
