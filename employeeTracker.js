@@ -13,7 +13,7 @@ var connection = mysql.createConnection({
 
     // The password and connected database
     password: "rootroot",
-    database: "playlist_db"
+    database: "corporationdb"
 });
 
 const mainMenu = [
@@ -122,7 +122,6 @@ function afterConnection() {
     });
 //     connection.query("SELECT * FROM products", function (err, res) {
 //         if (err) throw err;
-//         console.log(res);
-//         connection.end();
+//         console.table(res);
 //     });
 }
