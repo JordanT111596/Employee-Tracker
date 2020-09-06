@@ -13,7 +13,7 @@ var connection = mysql.createConnection({
 
     // The password and connected database
     password: "rootroot",
-    database: "corporationdb"
+    database: "corporation_db"
 });
 
 const mainMenu = [
