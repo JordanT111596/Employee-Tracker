@@ -82,16 +82,16 @@ const viewByDepartment = [
       type: "list",
       message: "Which department?",
       // choices: connection.department.name,
-      name: "deptChoice"  
+      name: "deptChoice"
     }
 ];
 
 const viewByRole = [
     {
       type: "list",
-      message: "Which department?",
+      message: "Which role?",
       // choices: connection.role.title,
-      name: "roleChoice"  
+      name: "roleChoice"
     }
 ];
 
@@ -108,7 +108,7 @@ const updateEmployee = [
         // choices: connection.role.title,
         name: "emNewRole",
     }
-]
+];
 
 connection.connect(function (err) {
     if (err) throw err;
@@ -118,7 +118,7 @@ connection.connect(function (err) {
 
 function afterConnection() {
     inquirer.prompt(mainMenu).then(function (mainChoice) {
-        console.log(mainChoice);
+        console.log(mainChoice.mainMenu);
     });
 //     connection.query("SELECT * FROM products", function (err, res) {
 //         if (err) throw err;
