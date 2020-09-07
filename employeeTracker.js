@@ -79,19 +79,19 @@ const addDepartment = [
 
 const viewByDepartment = [
     {
-      type: "list",
-      message: "Which department?",
-      // choices: connection.department.name,
-      name: "deptChoice"
+        type: "list",
+        message: "Which department?",
+        // choices: connection.department.name,
+        name: "deptChoice"
     }
 ];
 
 const viewByRole = [
     {
-      type: "list",
-      message: "Which role?",
-      // choices: connection.role.title,
-      name: "roleChoice"
+        type: "list",
+        message: "Which role?",
+        // choices: connection.role.title,
+        name: "roleChoice"
     }
 ];
 
@@ -119,9 +119,38 @@ connection.connect(function (err) {
 function afterConnection() {
     inquirer.prompt(mainMenu).then(function (mainChoice) {
         console.log(mainChoice.mainMenu);
+        if (mainChoice.mainMenu === "View All Employees") {
+            //function that shows a table of employees
+            //make that function link back to afterConnection()
+        } else if (mainChoice.mainMenu === "View All Employees by Department") {
+            //function that inquires about which department
+            //then shows a table of employees by that department
+            //make that function link back to afterConnection()
+        } else if (mainChoice.mainMenu === "View All Employees by Role") {
+            //function that inquires about which role
+            //then shows a table of employees by that role
+            //make that function link back to afterConnection()
+        } else if (mainChoice.mainMenu === "Add Employee") {
+            //function that inquires from addEmployee questions
+            //then takes those answers and inserts them into database table
+            //make that function link back to afterConnection()
+        } else if (mainChoice.mainMenu === "Add Role") {
+            //function that inquires from addRole questions
+            //then takes those answers and inserts them into database table
+            //make that function link back to afterConnection()
+        } else if (mainChoice.mainMenu === "Add Department") {
+            //function that inquires from addDepartment questions
+            //then takes those answers and inserts them into database table
+            //make that function link back to afterConnection()
+        } else if (mainChoice.mainMenu === "Update Employee Role") {
+            //function that inquires from updateEmployee questions
+            //then selects the employee we're updating
+            //then updates that specific employee's data in the listing
+            //make that function link back to afterConnection()
+        }
     });
-//     connection.query("SELECT * FROM products", function (err, res) {
-//         if (err) throw err;
-//         console.table(res);
-//     });
+    //     connection.query("SELECT * FROM products", function (err, res) {
+    //         if (err) throw err;
+    //         console.table(res);
+    //     });
 }
