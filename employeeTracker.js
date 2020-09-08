@@ -119,41 +119,41 @@ const updateEmployee = [
     }
 ];
 
-connection.connect(function (err) {
+connection.connect((err) => {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
     afterConnection();
 });
 
 function afterConnection() {
-    connection.query('SELECT title FROM role', function (err, data) {
+    connection.query('SELECT title FROM role', (err, data) => {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
             roleArr.push(data[i].title);
         }
     });
 
-    connection.query('SELECT name FROM department', function (err, data) {
+    connection.query('SELECT name FROM department', (err, data) => {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
             deptArr.push(data[i].name);
         }
     });
 
-    connection.query('SELECT name FROM manager', function (err, data) {
+    connection.query('SELECT name FROM manager', (err, data) => {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
             manArr.push(data[i].name);
         }
     });
 
-    connection.query('SELECT CONCAT(first_name, " ", last_name) AS full_name FROM employee', function (err, data) {
+    connection.query('SELECT CONCAT(first_name, " ", last_name) AS full_name FROM employee', (err, data) => {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
             empArr.push(data[i].full_name);
         }
     });
-    inquirer.prompt(mainMenu).then(function (mainChoice) {
+    inquirer.prompt(mainMenu).then((mainChoice) => {
         switch (mainChoice.mainMenu) {
             case "View All Employees":
                 viewAll();
@@ -185,7 +185,7 @@ function afterConnection() {
 };
 
 function viewAll() {
-    connection.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary, employee.manager_id FROM department INNER JOIN role ON department.id = role.department_id INNER JOIN employee ON employee.role_id = role.id', function (err, res) {
+    connection.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary, employee.manager_id FROM department INNER JOIN role ON department.id = role.department_id INNER JOIN employee ON employee.role_id = role.id', (err, res) => {
         if (err) throw err;
         console.table(res);
         afterConnection();
@@ -193,7 +193,7 @@ function viewAll() {
 };
 
 function viewAllDept() {
-    connection.query('SELECT id, name FROM department', function (err, res) {
+    connection.query('SELECT id, name FROM department', (err, res) => {
         if (err) throw err;
         console.table(res);
         afterConnection();
@@ -201,7 +201,7 @@ function viewAllDept() {
 };
 
 function viewAllRole() {
-    connection.query('SELECT id, title, salary, department_id FROM role', function (err, res) {
+    connection.query('SELECT id, title, salary, department_id FROM role', (err, res) => {
         if (err) throw err;
         console.table(res);
         afterConnection();
@@ -209,25 +209,25 @@ function viewAllRole() {
 };
 
 function addEmp() {
-    connection.query('SELECT id, title FROM role', function (err, data) {
+    connection.query('SELECT id, title FROM role', (err, data) => {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
             roleIdArr.push(data[i]);
         }
     });
-    connection.query('SELECT id, name FROM manager', function (err, data) {
+    connection.query('SELECT id, name FROM manager', (err, data) => {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
             manIdArr.push(data[i]);
         }
     });
-    connection.query('SELECT title FROM role', function (err, data) {
+    connection.query('SELECT title FROM role', (err, data) => {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
             roleArr.push(data[i].title);
         }
     });
-    inquirer.prompt(addEmployee).then(function (data) {
+    inquirer.prompt(addEmployee).then((data) => {
         let roleDetails = roleIdArr.find(obj => obj.title === data.emRole);
         let manDetails = manIdArr.find(obj => obj.name === data.emManager);
         let firstName = data.emFirstName;
@@ -240,8 +240,7 @@ function addEmp() {
                 last_name: lastName,
                 role_id: role,
                 manager_id: manager
-            },
-            function (err, res) {
+            }, (err, res) => {
                 if (err) throw err;
                 console.log(firstName + " " + lastName + " added to employee list!\n");
                 afterConnection();
@@ -251,13 +250,13 @@ function addEmp() {
 };
 
 function addRol() {
-    connection.query('SELECT id, name FROM department', function (err, data) {
+    connection.query('SELECT id, name FROM department', (err, data) => {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
             deptIdArr.push(data[i]);
         }
     });
-    inquirer.prompt(addRole).then(function (data) {
+    inquirer.prompt(addRole).then((data) => {
         let deptDetails = deptIdArr.find(obj => obj.name === data.roleDepartment);
         let role_salary = data.roleSalary;
         let role_title = data.roleTitle;
@@ -267,8 +266,7 @@ function addRol() {
                 title: role_title,
                 salary: role_salary,
                 department_id: dept
-            },
-            function (err, res) {
+            }, (err, res) => {
                 if (err) throw err;
                 console.log(role_title + " added to role list!\n");
                 afterConnection();
@@ -278,13 +276,12 @@ function addRol() {
 };
 
 function addDept() {
-    inquirer.prompt(addDepartment).then(function (data) {
+    inquirer.prompt(addDepartment).then( (data) => {
         let dept = data.departmentTitle;
         connection.query("INSERT INTO department SET ?",
             {
                 name: dept,
-            },
-            function (err, res) {
+            }, (err, res) => {
                 if (err) throw err;
                 console.log(dept + " added to department list!\n");
                 afterConnection();
@@ -294,19 +291,19 @@ function addDept() {
 };
 
 function updateEmp() {
-    connection.query('SELECT id, title FROM role', function (err, data) {
+    connection.query('SELECT id, title FROM role', (err, data) => {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
             roleIdArr.push(data[i]);
         }
     });
-    connection.query('SELECT id, CONCAT(first_name, " ", last_name) AS full_name FROM employee', function (err, data) {
+    connection.query('SELECT id, CONCAT(first_name, " ", last_name) AS full_name FROM employee', (err, data) => {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
             empIdArr.push(data[i]);
         }
     });
-    inquirer.prompt(updateEmployee).then(function (data) {
+    inquirer.prompt(updateEmployee).then( (data) => {
         let roleDetails = roleIdArr.find(obj => obj.title === data.emNewRole);
         let empDetails = empIdArr.find(obj => obj.full_name === data.emName);
         let role = roleDetails.id;
@@ -318,8 +315,7 @@ function updateEmp() {
             {
                 id: employee
             }
-        ],
-            function (err, res) {
+        ], (err, res) => {
                 if (err) throw err;
                 console.log(empDetails.full_name + " updated to " + roleDetails.title + " role!\n");
                 afterConnection();
