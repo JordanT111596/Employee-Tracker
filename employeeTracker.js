@@ -28,7 +28,7 @@ const mainMenu = [
     {
         type: "list",
         message: "What would you like to do?",
-        choices: ["View All Employees", "View All Employees by Department", "View All Employees by Role", "Add Employee", "Add Role", "Add Department", "Update Employee Role"],
+        choices: ["View All Employees", "View All Departments", "View All Roles", "Add Employee", "Add Role", "Add Department", "Update Employee Role"],
         name: "mainMenu"
     }
 ];
@@ -85,23 +85,23 @@ const addDepartment = [
     }
 ];
 
-const viewByDepartment = [
-    {
-        type: "list",
-        message: "Which department?",
-        choices: deptArr,
-        name: "deptChoice"
-    }
-];
+// const viewByDepartment = [
+//     {
+//         type: "list",
+//         message: "Which department?",
+//         choices: deptArr,
+//         name: "deptChoice"
+//     }
+// ];
 
-const viewByRole = [
-    {
-        type: "list",
-        message: "Which role?",
-        choices: roleArr,
-        name: "roleChoice"
-    }
-];
+// const viewByRole = [
+//     {
+//         type: "list",
+//         message: "Which role?",
+//         choices: roleArr,
+//         name: "roleChoice"
+//     }
+// ];
 
 const updateEmployee = [
     {
@@ -154,72 +154,56 @@ connection.query('SELECT CONCAT(first_name, " ", last_name) AS full_name FROM em
 
 function afterConnection() {
     inquirer.prompt(mainMenu).then(function (mainChoice) {
-        if (mainChoice.mainMenu === "View All Employees") {
-            viewAll();
-            //function that shows a table of employees
-            //make that function link back to afterConnection()
-        } else if (mainChoice.mainMenu === "View All Employees by Department") {
-            viewAllByDept();
-            //function that inquires about which department
-            //then shows a table of employees by that department
-            //make that function link back to afterConnection()
-        } else if (mainChoice.mainMenu === "View All Employees by Role") {
-            viewAllByRole();
-            //function that inquires about which role
-            //then shows a table of employees by that role
-            //make that function link back to afterConnection()
-        } else if (mainChoice.mainMenu === "Add Employee") {
-            addEmp();
-            //function that inquires from addEmployee questions
-            //then takes those answers and inserts them into database table
-            //make that function link back to afterConnection()
-        } else if (mainChoice.mainMenu === "Add Role") {
-            addRol();
-            //function that inquires from addRole questions
-            //then takes those answers and inserts them into database table
-            //make that function link back to afterConnection()
-        } else if (mainChoice.mainMenu === "Add Department") {
-            addDept();
-            //function that inquires from addDepartment questions
-            //then takes those answers and inserts them into database table
-            //make that function link back to afterConnection()
-        } else if (mainChoice.mainMenu === "Update Employee Role") {
-            updateEmp();
-            //function that inquires from updateEmployee questions
-            //then selects the employee we're updating
-            //then updates that specific employee's data in the listing
-            //make that function link back to afterConnection()
+        switch (mainChoice.mainMenu) {
+            case "View All Employees":
+                viewAll();
+                break;
+            case "View All Departments":
+                viewAllDept();
+                break;
+            case "View All Roles":
+                viewAllRole();
+                break;
+            case "Add Employee":
+                addEmp();
+                break;
+            case "Add Role":
+                addRol();
+                break;
+            case "Add Department":
+                addDept();
+                break;
+            case "Update Employee Role":
+                updateEmp();
+                break;
+
         }
-    });
-    //     connection.query("SELECT * FROM products", function (err, res) {
-    //         if (err) throw err;
-    //         console.table(res);
-    //     });
+    })
 };
 
-// function viewAll() {
-//     connection.query("SELECT * FROM products", function (err, res) {
-//         if (err) throw err;
-//         console.table(res);
-//     });
-//     afterConnection();
-// };
+function viewAll() {
+    connection.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary, employee.manager_id FROM department INNER JOIN role ON department.id = role.department_id INNER JOIN employee ON employee.role_id = role.id', function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        afterConnection();
+    });
+};
 
-// function viewAllByDept() {
-//     connection.query("SELECT * FROM products", function (err, res) {
-//         if (err) throw err;
-//         console.table(res);
-//     });
-//     afterConnection();
-// };
+function viewAllDept() {
+    connection.query('SELECT id, name FROM department', function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        afterConnection();
+    });
+};
 
-// function viewAllByRole() {
-//     connection.query("SELECT * FROM products", function (err, res) {
-//         if (err) throw err;
-//         console.table(res);
-//     });
-//     afterConnection();
-// };
+function viewAllRole() {
+    connection.query('SELECT id, title, salary, department_id FROM role', function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        afterConnection();
+    });
+};
 
 function addEmp() {
     connection.query('SELECT id, title FROM role', function (err, data) {
@@ -257,6 +241,7 @@ function addEmp() {
             function (err, res) {
                 if (err) throw err;
                 console.log(firstName + " " + lastName + " added to employee list!\n");
+                afterConnection();
             }
         );
     });
@@ -283,6 +268,7 @@ function addRol() {
             function (err, res) {
                 if (err) throw err;
                 console.log(role_title + " added to role list!\n");
+                afterConnection();
             }
         );
     });
@@ -298,6 +284,7 @@ function addDept() {
             function (err, res) {
                 if (err) throw err;
                 console.log(dept + " added to department list!\n");
+                afterConnection();
             }
         );
     });
