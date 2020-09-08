@@ -132,21 +132,21 @@ function afterConnection() {
             roleArr.push(data[i].title);
         }
     });
-    
+
     connection.query('SELECT name FROM department', function (err, data) {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
             deptArr.push(data[i].name);
         }
     });
-    
+
     connection.query('SELECT name FROM manager', function (err, data) {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
             manArr.push(data[i].name);
         }
     });
-    
+
     connection.query('SELECT CONCAT(first_name, " ", last_name) AS full_name FROM employee', function (err, data) {
         if (err) throw err;
         for (let i = 0; i < data.length; i++) {
@@ -176,9 +176,9 @@ function afterConnection() {
             case "Update Employee Role":
                 updateEmp();
                 break;
-                case "Exit":
-                    connection.end();
-                    break;
+            case "Exit":
+                connection.end();
+                break;
 
         }
     })
@@ -311,7 +311,7 @@ function updateEmp() {
         let empDetails = empIdArr.find(obj => obj.full_name === data.emName);
         let role = roleDetails.id;
         let employee = empDetails.id;
-        connection.query("UPDATE employee SET ? WHERE ?",[
+        connection.query("UPDATE employee SET ? WHERE ?", [
             {
                 role_id: role
             },
@@ -321,7 +321,7 @@ function updateEmp() {
         ],
             function (err, res) {
                 if (err) throw err;
-                console.log(empDetails.full_name + " updated to " + roleDetails.title +" role!\n");
+                console.log(empDetails.full_name + " updated to " + roleDetails.title + " role!\n");
                 afterConnection();
             }
         );
