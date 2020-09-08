@@ -291,7 +291,7 @@ function addRol() {
 
 //Function for adding department
 function addDept() {
-    inquirer.prompt(addDepartment).then( (data) => {
+    inquirer.prompt(addDepartment).then((data) => {
         let dept = data.departmentTitle;
         connection.query("INSERT INTO department SET ?",
             {
@@ -319,7 +319,7 @@ function updateEmp() {
             empIdArr.push(data[i]);
         }
     });
-    inquirer.prompt(updateEmployee).then( (data) => {
+    inquirer.prompt(updateEmployee).then((data) => {
         let roleDetails = roleIdArr.find(obj => obj.title === data.emNewRole);
         let empDetails = empIdArr.find(obj => obj.full_name === data.emName);
         let role = roleDetails.id;
@@ -332,10 +332,10 @@ function updateEmp() {
                 id: employee
             }
         ], (err, res) => {
-                if (err) throw err;
-                console.log(empDetails.full_name + " updated to " + roleDetails.title + " role!\n");
-                afterConnection();
-            }
+            if (err) throw err;
+            console.log(empDetails.full_name + " updated to " + roleDetails.title + " role!\n");
+            afterConnection();
+        }
         );
     });
 };
