@@ -2,6 +2,7 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 
+//connecting the database
 const connection = mysql.createConnection({
     host: "localhost",
 
@@ -16,6 +17,7 @@ const connection = mysql.createConnection({
     database: "corporation_db"
 });
 
+//Arrays needed to holding employee, department, and role info
 let deptArr = [];
 let roleArr = [];
 let manArr = [];
@@ -25,6 +27,7 @@ let roleIdArr = [];
 let deptIdArr = [];
 let manIdArr = [];
 
+//main menu questions
 const mainMenu = [
     {
         type: "list",
@@ -34,6 +37,7 @@ const mainMenu = [
     }
 ];
 
+//Add Employee Questions
 const addEmployee = [
     {
         type: "input",
@@ -59,6 +63,7 @@ const addEmployee = [
     }
 ];
 
+//Add Role Questions
 const addRole = [
     {
         type: "input",
@@ -78,6 +83,7 @@ const addRole = [
     }
 ];
 
+//Add Department Questions
 const addDepartment = [
     {
         type: "input",
@@ -104,6 +110,7 @@ const addDepartment = [
 //     }
 // ];
 
+//Update Employee Questions
 const updateEmployee = [
     {
         type: "list",
@@ -119,12 +126,14 @@ const updateEmployee = [
     }
 ];
 
+//Makes actual connection to db
 connection.connect((err) => {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
     afterConnection();
 });
 
+//Function for main menu and preloading/updating arrays
 function afterConnection() {
     connection.query('SELECT title FROM role', (err, data) => {
         if (err) throw err;
@@ -184,6 +193,7 @@ function afterConnection() {
     })
 };
 
+//Function for viewing all employees
 function viewAll() {
     connection.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary, employee.manager_id FROM department INNER JOIN role ON department.id = role.department_id INNER JOIN employee ON employee.role_id = role.id', (err, res) => {
         if (err) throw err;
@@ -192,6 +202,7 @@ function viewAll() {
     });
 };
 
+//Function for viewing all departments
 function viewAllDept() {
     connection.query('SELECT id, name FROM department', (err, res) => {
         if (err) throw err;
@@ -200,6 +211,7 @@ function viewAllDept() {
     });
 };
 
+//Function for viewing all roles
 function viewAllRole() {
     connection.query('SELECT id, title, salary, department_id FROM role', (err, res) => {
         if (err) throw err;
@@ -208,6 +220,7 @@ function viewAllRole() {
     });
 };
 
+//Function for adding employees
 function addEmp() {
     connection.query('SELECT id, title FROM role', (err, data) => {
         if (err) throw err;
@@ -249,6 +262,7 @@ function addEmp() {
     });
 };
 
+//Function for adding roles
 function addRol() {
     connection.query('SELECT id, name FROM department', (err, data) => {
         if (err) throw err;
@@ -275,6 +289,7 @@ function addRol() {
     });
 };
 
+//Function for adding department
 function addDept() {
     inquirer.prompt(addDepartment).then( (data) => {
         let dept = data.departmentTitle;
@@ -290,6 +305,7 @@ function addDept() {
     });
 };
 
+//Function for updating employee roles
 function updateEmp() {
     connection.query('SELECT id, title FROM role', (err, data) => {
         if (err) throw err;
