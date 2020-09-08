@@ -20,6 +20,9 @@ let deptArr = [];
 let roleArr = [];
 let manArr = [];
 let empArr = [];
+let roleIdArr = [];
+let deptIdArr = [];
+let manIdArr = [];
 
 const mainMenu = [
     {
@@ -124,28 +127,28 @@ connection.connect(function (err) {
 connection.query('SELECT title FROM role', function (err, data) {
     if (err) throw err;
     for (let i = 0; i < data.length; i++) {
-    roleArr.push(data[i].title);
+        roleArr.push(data[i].title);
     }
 });
 
 connection.query('SELECT name FROM department', function (err, data) {
     if (err) throw err;
     for (let i = 0; i < data.length; i++) {
-    deptArr.push(data[i].name);
+        deptArr.push(data[i].name);
     }
 });
 
 connection.query('SELECT name FROM manager', function (err, data) {
     if (err) throw err;
     for (let i = 0; i < data.length; i++) {
-    manArr.push(data[i].name);
+        manArr.push(data[i].name);
     }
 });
 
 connection.query('SELECT CONCAT(first_name, " ", last_name) AS full_name FROM employee', function (err, data) {
     if (err) throw err;
     for (let i = 0; i < data.length; i++) {
-    empArr.push(data[i].full_name);
+        empArr.push(data[i].full_name);
     }
 });
 
@@ -171,7 +174,7 @@ function afterConnection() {
             //then takes those answers and inserts them into database table
             //make that function link back to afterConnection()
         } else if (mainChoice.mainMenu === "Add Role") {
-            addRole();
+            addRol();
             //function that inquires from addRole questions
             //then takes those answers and inserts them into database table
             //make that function link back to afterConnection()
@@ -219,35 +222,71 @@ function afterConnection() {
 // };
 
 function addEmp() {
+    connection.query('SELECT id, title FROM role', function (err, data) {
+        if (err) throw err;
+        for (let i = 0; i < data.length; i++) {
+            roleIdArr.push(data[i]);
+        }
+    });
+    connection.query('SELECT id, name FROM manager', function (err, data) {
+        if (err) throw err;
+        for (let i = 0; i < data.length; i++) {
+            manIdArr.push(data[i]);
+        }
+    });
+    connection.query('SELECT title FROM role', function (err, data) {
+        if (err) throw err;
+        for (let i = 0; i < data.length; i++) {
+            roleArr.push(data[i].title);
+        }
+    });
     inquirer.prompt(addEmployee).then(function (data) {
+        let roleDetails = roleIdArr.find(obj => obj.title === data.emRole);
+        let manDetails = manIdArr.find(obj => obj.name === data.emManager);
         let firstName = data.emFirstName;
-        let lastName = data.emLastName;
-        let role = data.emRole;
-        let manager = data.emManager;
+        let lastName = data.emLastName
+        let role = roleDetails.id;
+        let manager = manDetails.id;
         connection.query("INSERT INTO employee SET ?",
             {
-              first_name: firstName,
-              last_name: lastName,
-              role_id: role,
-              manager_id: manager
+                first_name: firstName,
+                last_name: lastName,
+                role_id: role,
+                manager_id: manager
             },
-            function(err, res) {
-              if (err) throw err;
-              console.log(firstName + " " + lastName + " added to employee list!\n");
+            function (err, res) {
+                if (err) throw err;
+                console.log(firstName + " " + lastName + " added to employee list!\n");
             }
-          );
-        //insert to database using data
-        //console log that it was succesful
+        );
     });
 };
 
-// function addRole() {
-//     connection.query("SELECT * FROM products", function (err, res) {
-//         if (err) throw err;
-//         console.table(res);
-//     });
-//     afterConnection();
-// };
+function addRol() {
+    connection.query('SELECT id, name FROM department', function (err, data) {
+        if (err) throw err;
+        for (let i = 0; i < data.length; i++) {
+            deptIdArr.push(data[i]);
+        }
+    });
+    inquirer.prompt(addRole).then(function (data) {
+        let deptDetails = deptIdArr.find(obj => obj.name === data.roleDepartment);
+        let role_salary = data.roleSalary;
+        let role_title = data.roleTitle;
+        let dept = deptDetails.id;
+        connection.query("INSERT INTO role SET ?",
+            {
+                title: role_title,
+                salary: role_salary,
+                department_id: dept
+            },
+            function (err, res) {
+                if (err) throw err;
+                console.log(role_title + " added to role list!\n");
+            }
+        );
+    });
+};
 
 // function addDept() {
 //     connection.query("SELECT * FROM products", function (err, res) {
