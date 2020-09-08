@@ -20,6 +20,7 @@ let deptArr = [];
 let roleArr = [];
 let manArr = [];
 let empArr = [];
+let empIdArr = [];
 let roleIdArr = [];
 let deptIdArr = [];
 let manIdArr = [];
@@ -28,7 +29,7 @@ const mainMenu = [
     {
         type: "list",
         message: "What would you like to do?",
-        choices: ["View All Employees", "View All Departments", "View All Roles", "Add Employee", "Add Role", "Add Department", "Update Employee Role"],
+        choices: ["View All Employees", "View All Departments", "View All Roles", "Add Employee", "Add Role", "Add Department", "Update Employee Role", "Exit"],
         name: "mainMenu"
     }
 ];
@@ -108,7 +109,7 @@ const updateEmployee = [
         type: "list",
         message: "Which employee do you want to update?",
         choices: empArr,
-        name: "emID",
+        name: "emName",
     },
     {
         type: "list",
@@ -124,35 +125,34 @@ connection.connect(function (err) {
     afterConnection();
 });
 
-connection.query('SELECT title FROM role', function (err, data) {
-    if (err) throw err;
-    for (let i = 0; i < data.length; i++) {
-        roleArr.push(data[i].title);
-    }
-});
-
-connection.query('SELECT name FROM department', function (err, data) {
-    if (err) throw err;
-    for (let i = 0; i < data.length; i++) {
-        deptArr.push(data[i].name);
-    }
-});
-
-connection.query('SELECT name FROM manager', function (err, data) {
-    if (err) throw err;
-    for (let i = 0; i < data.length; i++) {
-        manArr.push(data[i].name);
-    }
-});
-
-connection.query('SELECT CONCAT(first_name, " ", last_name) AS full_name FROM employee', function (err, data) {
-    if (err) throw err;
-    for (let i = 0; i < data.length; i++) {
-        empArr.push(data[i].full_name);
-    }
-});
-
 function afterConnection() {
+    connection.query('SELECT title FROM role', function (err, data) {
+        if (err) throw err;
+        for (let i = 0; i < data.length; i++) {
+            roleArr.push(data[i].title);
+        }
+    });
+    
+    connection.query('SELECT name FROM department', function (err, data) {
+        if (err) throw err;
+        for (let i = 0; i < data.length; i++) {
+            deptArr.push(data[i].name);
+        }
+    });
+    
+    connection.query('SELECT name FROM manager', function (err, data) {
+        if (err) throw err;
+        for (let i = 0; i < data.length; i++) {
+            manArr.push(data[i].name);
+        }
+    });
+    
+    connection.query('SELECT CONCAT(first_name, " ", last_name) AS full_name FROM employee', function (err, data) {
+        if (err) throw err;
+        for (let i = 0; i < data.length; i++) {
+            empArr.push(data[i].full_name);
+        }
+    });
     inquirer.prompt(mainMenu).then(function (mainChoice) {
         switch (mainChoice.mainMenu) {
             case "View All Employees":
@@ -176,6 +176,9 @@ function afterConnection() {
             case "Update Employee Role":
                 updateEmp();
                 break;
+                case "Exit":
+                    connection.end();
+                    break;
 
         }
     })
@@ -290,10 +293,37 @@ function addDept() {
     });
 };
 
-// function updateEmp() {
-//     connection.query("SELECT * FROM products", function (err, res) {
-//         if (err) throw err;
-//         console.table(res);
-//     });
-//     afterConnection();
-// };
+function updateEmp() {
+    connection.query('SELECT id, title FROM role', function (err, data) {
+        if (err) throw err;
+        for (let i = 0; i < data.length; i++) {
+            roleIdArr.push(data[i]);
+        }
+    });
+    connection.query('SELECT id, CONCAT(first_name, " ", last_name) AS full_name FROM employee', function (err, data) {
+        if (err) throw err;
+        for (let i = 0; i < data.length; i++) {
+            empIdArr.push(data[i]);
+        }
+    });
+    inquirer.prompt(updateEmployee).then(function (data) {
+        let roleDetails = roleIdArr.find(obj => obj.title === data.emNewRole);
+        let empDetails = empIdArr.find(obj => obj.full_name === data.emName);
+        let role = roleDetails.id;
+        let employee = empDetails.id;
+        connection.query("UPDATE employee SET ? WHERE ?",[
+            {
+                role_id: role
+            },
+            {
+                id: employee
+            }
+        ],
+            function (err, res) {
+                if (err) throw err;
+                console.log(empDetails.full_name + " updated to " + roleDetails.title +" role!\n");
+                afterConnection();
+            }
+        );
+    });
+};
