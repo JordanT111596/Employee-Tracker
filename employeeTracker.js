@@ -288,13 +288,20 @@ function addRol() {
     });
 };
 
-// function addDept() {
-//     connection.query("SELECT * FROM products", function (err, res) {
-//         if (err) throw err;
-//         console.table(res);
-//     });
-//     afterConnection();
-// };
+function addDept() {
+    inquirer.prompt(addDepartment).then(function (data) {
+        let dept = data.departmentTitle;
+        connection.query("INSERT INTO department SET ?",
+            {
+                name: dept,
+            },
+            function (err, res) {
+                if (err) throw err;
+                console.log(dept + " added to department list!\n");
+            }
+        );
+    });
+};
 
 // function updateEmp() {
 //     connection.query("SELECT * FROM products", function (err, res) {
